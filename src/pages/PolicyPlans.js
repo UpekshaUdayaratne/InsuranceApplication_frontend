@@ -42,31 +42,56 @@ const PolicyPlans = () => {
     setMode("edit");
     setPolicyDetails(policyList.find((obj) => obj.id === id));
   };
+  const deletePolicy = (id) => {
+    axios
+      .post(
+        "/deletepolicyplan",
+        policyList.find((obj) => obj.id === id)
+      )
+      .then((res) => {
+        alert("Policy plan deleted sucessfully");
+        getPolicyList();
+        setState(false);
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
   const save = () => {
-    if (mode === "add") {
-      axios
-        .post("/addpolicyplan", policyDetails)
-        .then((res) => {
-          alert("Policy plan added sucessfully");
-          getPolicyList();
-          clear();
-          setState(false);
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
+    const { planName, description, coverage, noofyears } = policyDetails;
+    if (
+      planName !== "" &&
+      description !== "" &&
+      coverage !== "" &&
+      noofyears !== ""
+    ) {
+      if (mode === "add") {
+        axios
+          .post("/addpolicyplan", policyDetails)
+          .then((res) => {
+            alert("Policy plan added sucessfully");
+            getPolicyList();
+            clear();
+            setState(false);
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      } else {
+        axios
+          .post("/updatepolicyplan", policyDetails)
+          .then((res) => {
+            alert("Policy plan updated sucessfully");
+            getPolicyList();
+            clear();
+            setState(false);
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      }
     } else {
-      axios
-        .post("/updatepolicyplan", policyDetails)
-        .then((res) => {
-          alert("Policy plan updated sucessfully");
-          getPolicyList();
-          clear();
-          setState(false);
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
+      alert("Insert missing details");
     }
   };
   useEffect(() => {
@@ -82,7 +107,7 @@ const PolicyPlans = () => {
       }}
     >
       <div style={{ width: "80%" }}>
-        <Table striped bordered hover size="sm">
+        <Table striped bordered hover size="lg">
           <thead>
             <tr>
               <th>#</th>
@@ -105,9 +130,18 @@ const PolicyPlans = () => {
                   <td>
                     <Button
                       variant="primary"
+                      size="sm"
                       onClick={() => editPolicy(element.id)}
                     >
                       Edit
+                    </Button>
+                    {"  "}
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => deletePolicy(element.id)}
+                    >
+                      Delete
                     </Button>
                   </td>
                 </tr>
@@ -116,7 +150,7 @@ const PolicyPlans = () => {
           </tbody>
         </Table>
       </div>
-      <div>
+      <div style={{ marginTop: "20px" }}>
         <Button
           variant="primary"
           onClick={() => {

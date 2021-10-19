@@ -13,7 +13,9 @@ const HomePage = () => {
           alignItems: "center",
         }}
       >
-        <div style={{ marginTop: "200px", fontSize: "28px" }}>WELCOME !</div>
+        <div style={{ marginTop: "200px", fontSize: "28px" }}>
+          Insurance Management System
+        </div>
         <div
           style={{
             display: "flex",
@@ -31,8 +33,12 @@ const HomePage = () => {
             </Button>
           </div>
           <div style={{ marginLeft: "20px", marginRight: "20px" }}>
-            <Button variant="outline-info" size="lg">
-              Branch Details
+            <Button
+              variant="outline-info"
+              size="lg"
+              onClick={() => history.push("/InsuranceClaims")}
+            >
+              Insurance Claims
             </Button>
           </div>
           <div style={{ marginLeft: "20px" }}>

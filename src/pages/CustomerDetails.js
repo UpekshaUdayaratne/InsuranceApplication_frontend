@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  Table,
-  Button,
-  InputGroup,
-  FormControl,
-  Dropdown,
-  Form,
-} from "react-bootstrap";
+import { Table, Button, InputGroup, FormControl, Form } from "react-bootstrap";
 
 const CustomerDetails = () => {
   const [customerList, setCustomerList] = useState([]);
   const [mode, setMode] = useState("");
   const [state, setState] = useState(false);
+  const [policynameList, setPolicynameList] = useState([]);
   const [customerDetails, setCustomerDetails] = useState({
     firstName: "",
     lastName: "",
@@ -36,6 +30,16 @@ const CustomerDetails = () => {
       .get("/customerlist")
       .then((response) => {
         setCustomerList([...response.data]);
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+  const getPolicynamesList = () => {
+    axios
+      .get("/policynames")
+      .then((response) => {
+        setPolicynameList(response.data);
       })
       .catch((error) => {
         alert(error.message);
@@ -68,34 +72,49 @@ const CustomerDetails = () => {
       });
   };
   const save = () => {
-    if (mode === "add") {
-      axios
-        .post("/addcustomer", customerDetails)
-        .then((res) => {
-          alert("Customer added sucessfully");
-          getCustomerList();
-          clear();
-          setState(false);
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
+    const { firstName, lastName, monthlySalary, phoneNum, branch, policyPlan } =
+      customerDetails;
+
+    if (
+      firstName !== "" &&
+      lastName !== "" &&
+      monthlySalary !== "" &&
+      phoneNum !== "" &&
+      branch !== "" &&
+      policyPlan !== ""
+    ) {
+      if (mode === "add") {
+        axios
+          .post("/addcustomer", customerDetails)
+          .then((res) => {
+            alert("Customer added sucessfully");
+            getCustomerList();
+            clear();
+            setState(false);
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      } else {
+        axios
+          .post("/updatecustomer", customerDetails)
+          .then((res) => {
+            alert("Customer updated sucessfully");
+            getCustomerList();
+            clear();
+            setState(false);
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      }
     } else {
-      axios
-        .post("/updatecustomer", customerDetails)
-        .then((res) => {
-          alert("Customer updated sucessfully");
-          getCustomerList();
-          clear();
-          setState(false);
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
+      alert("Insert missing details");
     }
   };
   useEffect(() => {
     getCustomerList();
+    getPolicynamesList();
   }, []);
   return (
     <div
@@ -107,7 +126,7 @@ const CustomerDetails = () => {
       }}
     >
       <div style={{ width: "80%" }}>
-        <Table striped bordered hover size="sm">
+        <Table striped bordered hover size="lg">
           <thead>
             <tr>
               <th>#</th>
@@ -134,6 +153,7 @@ const CustomerDetails = () => {
                   <td>
                     <Button
                       variant="primary"
+                      size="sm"
                       onClick={() => editCustomer(element.id)}
                     >
                       Edit
@@ -141,6 +161,7 @@ const CustomerDetails = () => {
                     {"  "}
                     <Button
                       variant="danger"
+                      size="sm"
                       onClick={() => deleteCustomer(element.id)}
                     >
                       Delete
@@ -152,7 +173,7 @@ const CustomerDetails = () => {
           </tbody>
         </Table>
       </div>
-      <div>
+      <div style={{ marginTop: "20px" }}>
         <Button
           variant="primary"
           onClick={() => {
@@ -216,29 +237,20 @@ const CustomerDetails = () => {
               value={customerDetails.branch}
               onChange={handleChange}
             />
-            {/* <Dropdown>
-              <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
-                Dropdown Button
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown> */}
           </InputGroup>
           <InputGroup className="mb-3">
             <InputGroup.Text id="basic-addon1" className="w-25">
               Policy Plan
             </InputGroup.Text>
-            {/* <FormControl
+            <Form.Select
               name="policyPlan"
               value={customerDetails.policyPlan}
               onChange={handleChange}
-            /> */}
-            <Form.Select>
-              <option>Default select</option>
+            >
+              <option value="">Select Plan</option>
+              {policynameList.map((name) => {
+                return <option value={name}>{name}</option>;
+              })}
             </Form.Select>
           </InputGroup>
           <div style={{ display: "flex", flexDirection: "row-reverse" }}>
