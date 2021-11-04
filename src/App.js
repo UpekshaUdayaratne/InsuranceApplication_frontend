@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch, useLocation } from "react-router";
+import { Route, Switch, useHistory, useLocation } from "react-router";
 import "./App.css";
 import Home from "./pages/HomePage";
 import CustomerDetails from "./pages/CustomerDetails";
@@ -13,6 +13,7 @@ axios.defaults.baseURL = "http://127.0.0.1:8080/";
 
 function App() {
   const location = useLocation();
+  const history = useHistory();
   return (
     <div>
       {location.pathname !== "/" && (
@@ -24,14 +25,22 @@ function App() {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="me-auto">
-                <Nav.Link href="/">Home</Nav.Link>
-                <Nav.Link href="/CustomerDetails">Customers</Nav.Link>
-                <Nav.Link href="/PolicyPlans">Policies</Nav.Link>
+                <Nav.Link onClick={() => history.push("/")}>Home</Nav.Link>
+                <Nav.Link onClick={() => history.push("/CustomerDetails")}>
+                  Customers
+                </Nav.Link>
+                <Nav.Link onClick={() => history.push("/PolicyPlans")}>
+                  Policies
+                </Nav.Link>
                 <NavDropdown title="Claims">
-                  <NavDropdown.Item href="/InsuranceClaims">
+                  <NavDropdown.Item
+                    onClick={() => history.push("/InsuranceClaims")}
+                  >
                     View Claims
                   </NavDropdown.Item>
-                  <NavDropdown.Item href="/InsuranceClaims/AddClaim">
+                  <NavDropdown.Item
+                    onClick={() => history.push("/InsuranceClaims/AddClaim")}
+                  >
                     Create Claims
                   </NavDropdown.Item>
                 </NavDropdown>

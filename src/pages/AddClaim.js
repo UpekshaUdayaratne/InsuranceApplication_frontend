@@ -142,7 +142,7 @@ const AddClaim = () => {
         </InputGroup>
         <InputGroup className="mb-3">
           <InputGroup.Text id="basic-addon1" className="w-25">
-            Agent
+            Agent Name
           </InputGroup.Text>
           <FormControl
             name="agent"
